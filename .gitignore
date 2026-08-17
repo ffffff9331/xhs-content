@@ -1,0 +1,20 @@
+# Generated research and publish artifacts
+data/
+outputs/
+work/
+publish/
+
+# Python cache and local environment files
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local credentials and browser/session material
+cookies.json
+*.cookie
+*.session
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
