@@ -1,0 +1,4 @@
+interface:
+  display_name: "XHS Content Studio"
+  short_description: "Create bold XHS posts, covers, and locked publish packages."
+  default_prompt: "Use $xhs-content to research a Xiaohongshu topic, create a bold XHS-style caption and cover, then package the approved final version for publication."
