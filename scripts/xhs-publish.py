@@ -66,17 +66,21 @@ def verify_final_version(package: dict, cover: Path) -> None:
 
 
 def switch_to_image_note(page) -> None:
+    # The creator page has changed tab class names several times. Match the
+    # visible, exact tab label instead of coupling publication to one class.
     switched = page.evaluate("""() => {
-        const tabs = Array.from(document.querySelectorAll('.creator-tab'));
-        const imageTab = tabs.find(el =>
-            (el.innerText || '').trim() === '上传图文' &&
-            !el.hasAttribute('aria-hidden') &&
-            !el.style.left
-        );
+        const visible = el => {
+            const rect = el.getBoundingClientRect();
+            const style = getComputedStyle(el);
+            return rect.width > 0 && rect.height > 0 &&
+                style.visibility !== 'hidden' && style.display !== 'none';
+        };
+        const candidates = Array.from(document.querySelectorAll('*'))
+            .filter(el => visible(el) && (el.innerText || '').trim() === '上传图文')
+            .sort((left, right) => left.children.length - right.children.length);
+        const imageTab = candidates[0];
         if (!imageTab) return false;
-        imageTab.dispatchEvent(new MouseEvent('click', {
-            bubbles: true, cancelable: true, view: window,
-        }));
+        imageTab.click();
         return true;
     }""")
     if not switched:
@@ -128,7 +132,14 @@ def main() -> None:
         client._goto(PUBLISH_URL, timeout=30000, wait_min=4, wait_max=5, context="opening XHS creator page")
         page = client._page
         switch_to_image_note(page)
-        page.query_selector('input[type="file"]').set_input_files(str(cover))
+        file_inputs = page.query_selector_all('input[type="file"]')
+        image_input = next(
+            (item for item in file_inputs if "image" in (item.get_attribute("accept") or "").lower()),
+            file_inputs[0] if file_inputs else None,
+        )
+        if not image_input:
+            raise RuntimeError("Could not find the image-note upload input")
+        image_input.set_input_files(str(cover))
         page.wait_for_timeout(6000)
 
         title = page.query_selector(TITLE_SELECTOR)
