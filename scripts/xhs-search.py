@@ -98,6 +98,13 @@ def search_xhs(keyword, limit=30):
         corner = note_card.get("cornerTagInfo", [])
 
         note_id = item.get("id", "")
+        cover = note_card.get("cover", {})
+        image_list = note_card.get("imageList", [])
+        cover_url = cover.get("urlDefault", "") if isinstance(cover, dict) else ""
+        if not cover_url and image_list and isinstance(image_list[0], dict):
+            info_list = image_list[0].get("infoList", [])
+            if info_list and isinstance(info_list[0], dict):
+                cover_url = info_list[0].get("url", "")
         published = ""
         for tag in corner:
             if tag.get("type") == "publish_time":
@@ -113,6 +120,10 @@ def search_xhs(keyword, limit=30):
             "shares": parse_count(interact.get("sharedCount", "0")),
             "published": published,
             "url": f"https://www.xiaohongshu.com/explore/{note_id}" if note_id else "",
+            "cover_url": cover_url,
+            "cover_width": cover.get("width", 0) if isinstance(cover, dict) else 0,
+            "cover_height": cover.get("height", 0) if isinstance(cover, dict) else 0,
+            "note_type": note_card.get("type", item.get("type", "")),
         })
 
     # Sort by likes descending
@@ -184,6 +195,10 @@ def search_xhs(keyword, limit=30):
             "content_hash": "",
             "tags": tags,
             "ip_location": detail.get("ipLocation", ""),
+            "cover_url": card["cover_url"],
+            "cover_width": card["cover_width"],
+            "cover_height": card["cover_height"],
+            "note_type": card["note_type"],
         })
 
     log(f"Found {len(results)} XHS posts for '{keyword}' ({len(detail_map)} with full detail)")
