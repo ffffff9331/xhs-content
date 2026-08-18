@@ -45,7 +45,7 @@ git clone https://github.com/ffffff9331/xhs-content.git ~/.codex/skills/xhs-cont
 After restarting or refreshing Codex, ask for a complete post:
 
 ```text
-Use xhs-content to create an XHS post about nursing graduate-school admissions, with the full caption and one bold cover.
+Use xhs-content to create an XHS post titled “How I cleared 10 square meters in a 20-square-meter rental bedroom,” with the full caption and one bold cover.
 ```
 
 ### OpenClaw
@@ -61,7 +61,7 @@ openclaw skills install git:ffffff9331/xhs-content@main
 ### Research, Then Create
 
 ```text
-Research current Xiaohongshu conversations about nursing graduate school, then create a post titled “After a nursing master's, you still work in a hospital. What did three years really buy you?” with one cover.
+Research current Xiaohongshu conversations about weekend camping, then create a post titled “Your first camping trip with a dog: don't turn the weekend into a disaster scene” with one cover.
 ```
 
 Research output is stored under:
@@ -84,7 +84,7 @@ For claims involving admissions, fees, policy, medical information, salaries, or
 ### Create One Image Note
 
 ```text
-Create an XHS post: How should people from second-tier universities, repeat test takers, working professionals, and people over 30 assess the risk and pace of graduate-school entrance exams? Make the caption and the one cover unmistakably Xiaohongshu-style.
+Create an XHS post: In your third working year, should you resign before looking, job-hunt while employed, or save six months of expenses first? Make the caption and the one cover unmistakably Xiaohongshu-style.
 ```
 
 The default deliverables are:
@@ -94,14 +94,14 @@ The default deliverables are:
 - `post-package.json`
 - `publish/cover.png`
 
-Before `publish/cover.png` is rendered, the skill also runs same-category cover research. For example, a kitten-arrival post searches both `幼猫到家` and `接猫清单`, inspects the current high-engagement visual conventions, then chooses an original photo-diary, product-focus, or checklist treatment. Research references stay in the local `cover-research/` folder and must never be published, used as final-cover backgrounds, or committed.
+Before `publish/cover.png` is rendered, the skill also runs same-category cover research. For example, a first camping trip with a dog searches both `带狗露营` and `宠物露营装备`, inspects the current high-engagement visual conventions, then chooses an original photo-diary, product-focus, or checklist treatment. Research references stay in the local `cover-research/` folder and must never be published, used as final-cover backgrounds, or committed.
 
 The resulting cover is not mechanically assigned a template name. The skill creates a post-specific `cover.design` blueprint for image crop, contrast layers, headline placement, hook treatment, and footer; the validator requires that blueprint before a researched new cover can pass.
 
 ### Use An AI Scene Image As A Cover Background
 
 ```text
-Generate a text-free study-room scene for nursing graduate-school preparation, then use it as the background of an XHS cover.
+Generate a text-free rainy-day coffee-shop work scene, then use it as the background of an XHS cover for a freelance day-in-the-life post.
 ```
 
 Scene images must contain **no embedded text or Chinese characters**, and the literal subject must be recognisable. The cover renderer is responsible for Chinese headline typography, preventing garbled text and inconsistent fonts.
@@ -117,7 +117,7 @@ Use the returned prompt to create one new image, save it as `publish/background.
 ### Build A Carousel
 
 ```text
-Turn “The nursing master's ledger: tuition, stipends, opportunity cost, and the returns you cannot quantify” into a 6-slide XHS carousel.
+Turn “My first solo Japan trip: packing, transport, hotels, and traps to avoid” into a 6-slide XHS carousel.
 ```
 
 ### Publish The Approved Final Version
