@@ -6,14 +6,17 @@ A Codex / OpenClaw skill for Xiaohongshu (XHS) image-note creation. One `post-pa
 
 ## What It Does
 
-| Capability | Output |
-| --- | --- |
-| Topic research | XHS search results, recurring hooks, comment questions, and differentiated angles |
-| Image-note creation | A complete Chinese XHS caption, hashtags, and one 3:4 cover |
-| Cover research | A private same-topic reference wall for analysis, never for reuse |
-| Scene-led covers | A per-post subject, composition, text-safe area, and text-free scene-image prompt |
-| Carousels | 2–10 slides for lists, steps, and comparisons |
-| Final publishing | A locked title, full caption, hashtags, and cover uploaded as one image note |
+| Capability | What it actually does | Deliverable and limit |
+| --- | --- | --- |
+| Topic research | Searches XHS notes for a keyword and organizes recurring angles, title hooks, comment questions, and differentiated directions. | `sources.jsonl`, `report.md`, and `drafts.md`. High-stakes claims such as policy, medicine, and salaries still need separate source verification. |
+| Complete image note | Creates a title, complete Chinese caption, hashtags, and cover copy using short paragraphs, an opening hook, and a comment prompt. | One `post-package.json`, the single source of truth for copy, cover, and publishing. |
+| Same-topic cover research | Collects high-engagement covers for the current topic and inspects subject placement, title density, color, composition, and information hierarchy. | A private `cover-research/` reference wall and analysis record. Reference images are research only, never final assets. |
+| Per-post cover direction | Defines the literal subject, required image elements, text-safe area, palette, and a layout blueprint for this particular note. | `cover.visual`, `cover.palette`, and `cover.design` in the package. It does not select from a fixed pet, food, or career template library. |
+| Scene-image prompt | Produces a concrete scene, camera, lighting, subject-position, and avoid-list prompt for photo-led covers. | `xhs-scene-prompt.py` exports the prompt; it does not generate the image. A generator or properly licensed source must provide the text-free background. |
+| Cover rendering | Adds stable Chinese title, hook, and necessary labels to a text-free background and renders a 3:4 cover. | `publish/cover.svg` and `publish/cover.png`. Scene-led covers need a topic-relevant background; research-backed text-led opinion covers may omit it. |
+| Carousels | Splits lists, steps, or comparisons into 2–10 slides, with the first slide following the cover rules. | SVG for every slide, plus PNG when a renderer is available. |
+| Style checks and version lock | Checks caption structure, hashtags, cover fields, visual direction, and cover research; after approval, it creates a final hash lock. | The lock binds the title, **complete caption plus hashtags**, and cover. Changing any of them blocks publishing. |
+| Image-note publishing | Opens the creator page's `上传图文` flow and uploads the locked cover, title, and complete caption. | Runs only after explicit approval. It stops for login, CAPTCHA, declarations, or unexpected page states; it does not bypass platform steps. |
 
 ## Workflow
 
