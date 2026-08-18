@@ -38,6 +38,11 @@ PUBLISH_URL = "https://creator.xiaohongshu.com/publish/publish"
 TITLE_SELECTOR = 'input[placeholder="填写标题会有更多赞哦"]'
 EDITOR_SELECTOR = '[contenteditable="true"]'
 PUBLISH_HOST_SELECTOR = 'xhs-publish-btn[is-publish="true"]'
+AUTOMATION_RISK_NOTICE = (
+    "AUTOMATION RISK: This command programmatically publishes to Xiaohongshu. "
+    "Automated posting can trigger account risk controls or account penalties and is not the recommended workflow. "
+    "Prefer manual upload in the creator page. Do not use this command for unattended, scheduled, bulk, or multi-account posting."
+)
 
 
 def full_caption(package: dict) -> str:
@@ -112,10 +117,21 @@ def main() -> None:
     parser.add_argument("--input", required=True, help="Approved post-package.json")
     parser.add_argument("--cover", required=True, help="Rendered PNG/JPG cover")
     parser.add_argument("--publish", action="store_true", help="Required to perform the external publication")
+    parser.add_argument(
+        "--acknowledge-automation-risk",
+        action="store_true",
+        help="Required acknowledgement that automated publishing carries account-risk and penalty risk",
+    )
     parser.add_argument("--debug-screenshot", help="Optional screenshot path after the action")
     args = parser.parse_args()
     if not args.publish:
         raise SystemExit("Refusing to publish without --publish")
+    if not args.acknowledge_automation_risk:
+        raise SystemExit(
+            f"{AUTOMATION_RISK_NOTICE}\n\n"
+            "Refusing to continue. Upload manually, or pass --acknowledge-automation-risk only after the user explicitly accepts this risk."
+        )
+    print(AUTOMATION_RISK_NOTICE, file=sys.stderr, flush=True)
 
     cookie_str_to_dict, get_saved_cookie_string, XhsClient = load_xhs_cli()
 
