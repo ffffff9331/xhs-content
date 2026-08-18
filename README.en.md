@@ -1,134 +1,122 @@
 # xhs-content
 
-A Codex / OpenClaw skill for creating complete Xiaohongshu (XHS) posts: research a topic, write a distinctly XHS-native caption, render a scroll-stopping cover, lock the approved version, and publish the final image note.
-
-This is not a generic article generator with an unrelated poster. Every complete post uses one `post-package.json` as the source of truth for its title, full caption, hashtags, cover, and publish payload.
+A Codex / OpenClaw skill for Xiaohongshu (XHS) image-note creation. One `post-package.json` holds the title, complete caption, hashtags, cover, and publish payload so the reviewed draft and the published version stay identical.
 
 **English** | [中文](./README.md)
 
 ## What It Does
 
-| Capability | Result |
+| Capability | Output |
 | --- | --- |
-| Topic research | Collects XHS notes and produces trend signals, recurring hooks, comment questions, differentiated angles, and a source table |
-| XHS-native captions | Opens with a hook, uses phone-readable paragraphs and conversational Chinese, gives a usable point of view, and ends with a comment prompt |
-| One strong cover | Produces a 3:4 vertical cover with big headline lines, a high-contrast hook, context badge, and a phone-readable hierarchy |
-| Category cover research | Before every cover, collects current high-engagement same-topic covers into a private reference sheet, then analyzes composition, text density, color, and subject treatment |
-| Content-aware covers | Defines the literal subject, mood, required visual elements, and text-safe area first. A kitten post must show a kitten; a product post must show the product |
-| Scene-image support | Derives a unique text-free scene prompt for every photo-led post, creates a subject-relevant new AI-generated or rights-cleared background, then applies deterministic Chinese typography |
-| Carousels | Creates 2–10 slide carousels for lists, steps, and explainers |
-| Final-version lock | Hashes the title, full caption including hashtags, and cover to prevent an accidental short preview from being published |
-| XHS publishing | Targets the current creator-page upload tab and publish control, and only publishes the locked final package |
+| Topic research | XHS search results, recurring hooks, comment questions, and differentiated angles |
+| Image-note creation | A complete Chinese XHS caption, hashtags, and one 3:4 cover |
+| Cover research | A private same-topic reference wall for analysis, never for reuse |
+| Scene-led covers | A per-post subject, composition, text-safe area, and text-free scene-image prompt |
+| Carousels | 2–10 slides for lists, steps, and comparisons |
+| Final publishing | A locked title, full caption, hashtags, and cover uploaded as one image note |
 
-## Non-Negotiable Creative Rules
+## Workflow
 
-- **The caption must look and feel like Xiaohongshu.** The hook lands in the first 1–3 lines; the tone is conversational, paragraphs are short, advice is concrete, and the close asks for a specific comment.
-- **The cover must look and feel like Xiaohongshu.** It is a 3:4 vertical image with a scroll-stopping subject and phone-readable hierarchy. A raw food or lifestyle cover may need only one or two large lines over the scene, while a comparison may earn a badge and high-contrast hook. Each category chooses its own researched contrast palette rather than forcing every topic into one color system.
-- **Every cover begins with same-category research.** The skill searches current high-engagement XHS notes for the exact topic, creates a private reference sheet, and inspects composition, title density, color, subject scale, and badge placement. The final cover may use category-level conventions only: it must have a new scene, copy, and composition, never reuse a reference image, headline, or recognisable creator treatment.
-- **New covers do not select from a fixed template library.** Each one requires a `cover.design` visual blueprint that directly specifies this post's image crop, text zones, overlays, emphasis elements, and footer. Legacy layouts remain only for backwards compatibility.
-- **The cover must belong to this exact note.** New posts define `cover.visual` first. Use `photo-story` for a literal subject-led scene, `photo-diary` for lifestyle/personal memory, `product-focus` for products, venues, food, objects, or destinations, `editorial` for careers, education, interviews, or a strong point of view, and `checklist` only for genuine lists, comparisons, or processes. Different industries must not inherit the same unrelated template.
-- **Every photo-led cover receives a genuinely new background.** `cover.scene` records this note's shot, setting, action, literal subject, lighting, and text-safe area, plus a negative prompt for text, Chinese characters, logos, watermarks, and category-specific mistakes. It becomes the exact input for image generation. Pets, restaurants, careers, and nursing cannot be the same image with different copy or colors.
-- **A complete post defaults to one cover plus the full caption.** Text-only is produced only when the user explicitly requests it.
-- **Approved long copy is immutable.** A short version is allowed only when explicitly requested and packaged separately with `mode: "short"`.
-- **Only a locked package can publish.** Any title, full-caption, hashtag, or cover change invalidates the lock and requires approval again.
+1. **Research the category first.** For a new cover, collect and inspect current high-engagement XHS notes for the exact topic. Extract conventions; never use the reference covers as final assets.
+2. **Create one complete post package.** The caption, hashtags, cover copy, and visual direction live in `post-package.json`.
+3. **Choose the cover treatment from the content.** Pets, venues, products, travel, and personal stories use subject-relevant scenes. Career opinions and comparisons may use a text-led editorial cover when the research supports it. New covers are not selected from a fixed template library.
+4. **Publish only after approval.** The final title, full caption, hashtags, and cover are locked together. Any change invalidates the lock.
+
+## Important Limits
+
+- A complete post defaults to a **full caption plus one cover**. Text-only output requires an explicit request.
+- The cover must visibly belong to the topic: kitten posts show a kitten, venue posts show the venue or food, and product posts show the product.
+- Photo-led covers need a new, text-free background image. `xhs-scene-prompt.py` exports the unique image brief; it **does not generate the bitmap itself**. Use an available image-generation tool or a properly licensed image source for that background.
+- Third-party reference covers are local analysis material only. Never publish them, use them as final backgrounds, or commit them.
+- Verify high-stakes factual claims such as admissions, policy, medicine, salaries, and employment. Publishing is an external action and requires explicit final approval.
 
 ## Install
 
 ### Codex
 
-Clone this repository into the Codex skills directory:
-
 ```bash
 git clone https://github.com/ffffff9331/xhs-content.git ~/.codex/skills/xhs-content
 ```
 
-After restarting or refreshing Codex, ask for a complete post:
-
-```text
-Use xhs-content to create an XHS post titled “How I cleared 10 square meters in a 20-square-meter rental bedroom,” with the full caption and one bold cover.
-```
+Refresh Codex, then ask for a post in chat.
 
 ### OpenClaw
 
-For an OpenClaw environment that supports Git-based skill installation:
+For OpenClaw environments with Git-based skill installation:
 
 ```bash
 openclaw skills install git:ffffff9331/xhs-content@main
 ```
 
-## Typical Workflows
+## Usage
 
-### Research, Then Create
+The examples below use “weekend city cycling” as one continuous topic. Replace it with your own subject.
+
+### 1. Create one image note
 
 ```text
-Research current Xiaohongshu conversations about weekend camping, then create a post titled “Your first camping trip with a dog: don't turn the weekend into a disaster scene” with one cover.
+Use xhs-content to create an XHS post: “My first weekend city ride: how do I plan the route, food, and outfit without a mess?”
+I need the full caption and one cover. Both must feel distinctly Xiaohongshu-native.
 ```
 
-Research output is stored under:
+Default output:
 
 ```text
 data/<date>-<keyword>/
-├── sources.jsonl
-├── report.md
-├── drafts.md
+├── post-package.json
 ├── cover-research/
-│   ├── cover-references.json
-│   ├── cover-reference-wall.html
-│   ├── cover-reference-sheet.jpg
-│   └── reference-covers/
-└── post-package.json
+└── publish/
+    ├── cover.svg
+    └── cover.png
 ```
 
-For claims involving admissions, fees, policy, medical information, salaries, or employment, verify official sources before presenting them as fact.
-
-### Create One Image Note
+### 2. Research, then create
 
 ```text
-Create an XHS post: In your third working year, should you resign before looking, job-hunt while employed, or save six months of expenses first? Make the caption and the one cover unmistakably Xiaohongshu-style.
+Research current Xiaohongshu posts about weekend city cycling and give me a trend report.
+Then choose one differentiated angle and turn it into a full caption and one cover.
 ```
 
-The default deliverables are:
+Research also creates `sources.jsonl`, `report.md`, and a private `cover-research/` directory. Images inside the cover-research directory must not be published or committed.
 
-- Title
-- Full caption and hashtags
-- `post-package.json`
-- `publish/cover.png`
-
-Before `publish/cover.png` is rendered, the skill also runs same-category cover research. For example, a first camping trip with a dog searches both `带狗露营` and `宠物露营装备`, inspects the current high-engagement visual conventions, then chooses an original photo-diary, product-focus, or checklist treatment. Research references stay in the local `cover-research/` folder and must never be published, used as final-cover backgrounds, or committed.
-
-The resulting cover is not mechanically assigned a template name. The skill creates a post-specific `cover.design` blueprint for image crop, contrast layers, headline placement, hook treatment, and footer; the validator requires that blueprint before a researched new cover can pass.
-
-### Use An AI Scene Image As A Cover Background
+### 3. Build a carousel
 
 ```text
-Generate a text-free rainy-day coffee-shop work scene, then use it as the background of an XHS cover for a freelance day-in-the-life post.
+Turn “My first weekend city ride: 5 things not to miss before leaving” into a six-slide Xiaohongshu carousel.
 ```
 
-Scene images must contain **no embedded text or Chinese characters**, and the literal subject must be recognisable. The cover renderer is responsible for Chinese headline typography, preventing garbled text and inconsistent fonts.
+Carousels suit steps, checklists, and comparisons. Their first slide follows the same cover-research and style rules.
 
-For photo-led covers, export the post-specific image-generation request before producing the background:
+## Photo-Led Covers
+
+For a scene-led cover, first write the literal subject, setting, camera treatment, text-safe area, and avoid list in `post-package.json`. Export the unique prompt:
 
 ```bash
-python3 scripts/xhs-scene-prompt.py --input data/<date>-<keyword>/post-package.json --json
+python3 scripts/xhs-scene-prompt.py \
+  --input data/<date>-<keyword>/post-package.json \
+  --json
 ```
 
-Use the returned prompt to create one new image, save it as `publish/background.png`, then pass it to `xhs-cover.py --background`. Never select a background from a fixed category template.
+Generate or obtain one **text-free, watermark-free, 3:4** scene image, save it as `publish/background.png`, then render the Chinese cover typography:
 
-### Build A Carousel
-
-```text
-Turn “My first solo Japan trip: packing, transport, hotels, and traps to avoid” into a 6-slide XHS carousel.
+```bash
+python3 scripts/xhs-cover.py \
+  --input data/<date>-<keyword>/post-package.json \
+  --background data/<date>-<keyword>/publish/background.png \
+  --out-dir data/<date>-<keyword>/publish
 ```
 
-### Publish The Approved Final Version
+When research supports a text-led opinion cover, the visual blueprint may explicitly disable the background image. Do not force every category into the same photo treatment or layout.
 
-Only after the user explicitly approves the exact title, **full caption**, hashtags, cover, visibility, and timing:
+## Publish an Approved Version
+
+Run these commands only after the user approves the exact title, full caption, hashtags, cover, visibility, and timing:
 
 ```bash
 python3 scripts/xhs-style-check.py \
   --input data/<date>-<keyword>/post-package.json \
   --cover data/<date>-<keyword>/publish/cover.png \
-  --strict --write-lock
+  --strict --require-visual --require-cover-research --write-lock
 
 python3 scripts/xhs-publish.py \
   --input data/<date>-<keyword>/post-package.json \
@@ -136,75 +124,37 @@ python3 scripts/xhs-publish.py \
   --publish
 ```
 
-The publisher switches to the current creator page’s image-note upload tab and uses the current publish control. It refuses any payload that does not exactly match the approved lock.
+The publisher uses the current creator-page `上传图文` entry. It proceeds only when the lock exactly matches the title, full caption, hashtags, and cover. It stops for login, CAPTCHA, declarations, or unexpected dialogs.
+
+## Requirements
+
+- Python 3.8+
+- An available Chinese font
+- [`xhs-cli`](https://github.com/jackwener/xhs-cli) for XHS search, login, and publishing
+- Pillow (optional, for the local reference wall)
+- Optional image-generation capability or properly licensed text-free scene images
+
+Before first XHS research or publishing, log in locally:
+
+```bash
+xhs login
+```
+
+Never commit cookies, QR codes, login information, unapproved drafts, test output, or third-party images from `cover-research/`.
 
 ## Core Files
 
 | File | Purpose |
 | --- | --- |
-| `scripts/xhs-search.py` | Collect XHS notes for a keyword |
-| `scripts/xhs-cover-research.py` | Collect current high-engagement same-topic covers into a private reference sheet before each cover |
-| `scripts/xhs-scene-prompt.py` | Turn each photo-led cover's unique visual direction into an image-generation prompt |
-| `scripts/xhs-cover.py` | Render one 3:4, Chinese-typography-safe, bold XHS cover |
-| `scripts/xhs-carousel.py` | Render a multi-slide carousel |
-| `scripts/xhs-style-check.py` | Validate XHS style and final-version locks |
-| `scripts/xhs-publish.py` | Publish a locked image-note package |
-| `references/post-package.md` | Schema for the single-source-of-truth post package |
-| `references/style-qa.md` | Editorial and visual QA checklist |
-
-## Dependencies And Login
-
-### Research
-
-Research uses [`xhs-cli`](https://github.com/jackwener/xhs-cli):
-
-```bash
-pipx install xhs-cli
-xhs login
-```
-
-Initial login is completed locally. Cookies are managed by `xhs-cli` and must never be committed, shared, or included in generated packages.
-
-### Covers And Images
-
-- Python 3.8+
-- An available Chinese font
-- Pillow, for assembling the private reference sheet; individual references still remain available if it is not installed
-- Optional image-generation capability for text-free scene backgrounds
-
-Without an image generator, `xhs-cover.py` still produces a usable information-card cover.
-
-## Repository Layout
-
-```text
-xhs-content/
-├── SKILL.md
-├── README.md
-├── README.en.md
-├── LICENSE
-├── agents/
-│   └── openai.yaml
-├── references/
-│   ├── prompt.md
-│   ├── post-package.md
-│   ├── style-qa.md
-│   └── carousel.md
-└── scripts/
-    ├── xhs-search.py
-    ├── xhs-cover-research.py
-    ├── xhs-scene-prompt.py
-    ├── xhs-cover.py
-    ├── xhs-carousel.py
-    ├── xhs-style-check.py
-    └── xhs-publish.py
-```
-
-## Notes
-
-- XHS page structure and anti-bot measures can change. Re-run `xhs login` when research authentication expires.
-- Publishing is an external action and requires explicit user approval of the final version.
-- Never commit QR codes, cookies, creator-page login data, unapproved drafts, or test output.
-- Never commit or upload third-party reference images inside `cover-research/`; they are private visual analysis only.
+| `SKILL.md` | Execution rules for the skill |
+| `references/post-package.md` | `post-package.json` field reference |
+| `scripts/xhs-search.py` | Topic search |
+| `scripts/xhs-cover-research.py` | Same-topic cover research |
+| `scripts/xhs-scene-prompt.py` | Per-post scene-image prompt |
+| `scripts/xhs-cover.py` | Chinese cover rendering |
+| `scripts/xhs-carousel.py` | Carousel rendering |
+| `scripts/xhs-style-check.py` | Style validation and final-version locking |
+| `scripts/xhs-publish.py` | Locked image-note publishing |
 
 ## License
 
