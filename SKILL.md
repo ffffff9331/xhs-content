@@ -103,10 +103,6 @@ Use when the user asks for multiple pages or a step-by-step visual explanation.
 
 Only publish after the user explicitly approves the exact title, complete caption, hashtags, cover, visibility, and timing.
 
-**Automatic publishing has account-risk and account-penalty risk and is not the recommended workflow.** Prefer that the user uploads the locked title, full caption, hashtags, and cover manually in the creator page. Never use automatic publishing for unattended, scheduled, bulk, multi-account, or interaction automation.
-
-If the user explicitly still requests automatic publishing, show this warning before running the publisher and obtain a separate, unambiguous acknowledgement of that risk. Normal approval of the post content is not enough.
-
 1. Render the approved cover from the package.
 2. Lock the approved version. This creates hashes for the title, **complete caption including tags**, and cover image:
 
@@ -123,10 +119,10 @@ python3 scripts/xhs-style-check.py \
 python3 scripts/xhs-publish.py \
   --input "<post-package.json>" \
   --cover "<output-dir>/cover.png" \
-  --publish --acknowledge-automation-risk
+  --publish
 ```
 
-The publisher repeats the risk warning and refuses to run without `--acknowledge-automation-risk`. It targets the current creator page’s `上传图文` tab and `xhs-publish-btn[is-publish="true"]` control, not the old plain-text button selector. It refuses publication if the version lock is missing or does not match. It keeps public/immediate defaults unless the user explicitly requests a different visibility or schedule. Treat publication as successful only on `published=true` or another explicit success state. Stop for CAPTCHA, login, policy declarations, or unexpected dialogs and ask the user to take over.
+The publisher targets the current creator page’s `上传图文` tab and `xhs-publish-btn[is-publish="true"]` control, not the old plain-text button selector. It refuses publication if the version lock is missing or does not match. It keeps public/immediate defaults unless the user explicitly requests a different visibility or schedule. Treat publication as successful only on `published=true` or another explicit success state. Stop for CAPTCHA, login, policy declarations, or unexpected dialogs and ask the user to take over.
 
 ## Output Layout
 

@@ -16,7 +16,7 @@ A Codex / OpenClaw skill for Xiaohongshu (XHS) image-note creation. One `post-pa
 | Cover rendering | Adds stable Chinese title, hook, and necessary labels to a text-free background and renders a 3:4 cover. | `publish/cover.svg` and `publish/cover.png`. Scene-led covers need a topic-relevant background; research-backed text-led opinion covers may omit it. |
 | Carousels | Splits lists, steps, or comparisons into 2–10 slides, with the first slide following the cover rules. | SVG for every slide, plus PNG when a renderer is available. |
 | Style checks and version lock | Checks caption structure, hashtags, cover fields, visual direction, and cover research; after approval, it creates a final hash lock. | The lock binds the title, **complete caption plus hashtags**, and cover. Changing any of them blocks publishing. |
-| Image-note publishing | Opens the creator page's `上传图文` flow and uploads the locked cover, title, and complete caption. | Automated publishing carries account-risk and account-penalty risk. It is not the recommended workflow; prefer manual upload. |
+| Image-note publishing | Opens the creator page's `上传图文` flow and uploads the locked cover, title, and complete caption. | Runs only after explicit approval. It stops for login, CAPTCHA, declarations, or unexpected page states; it does not bypass platform steps. |
 
 ## Workflow
 
@@ -32,7 +32,6 @@ A Codex / OpenClaw skill for Xiaohongshu (XHS) image-note creation. One `post-pa
 - Photo-led covers need a new, text-free background image. `xhs-scene-prompt.py` exports the unique image brief; it **does not generate the bitmap itself**. Use an available image-generation tool or a properly licensed image source for that background.
 - Third-party reference covers are local analysis material only. Never publish them, use them as final backgrounds, or commit them.
 - Verify high-stakes factual claims such as admissions, policy, medicine, salaries, and employment. Publishing is an external action and requires explicit final approval.
-- **Automated publishing carries account-risk and account-penalty risk and is not the recommended workflow.** Do not use it for unattended, scheduled, bulk, multi-account, comment, message, like, or follow automation.
 
 ## Install
 
@@ -114,22 +113,7 @@ When research supports a text-led opinion cover, the visual blueprint may explic
 
 ## Publish an Approved Version
 
-### Manual Upload (Recommended)
-
-After approval, write the version lock first. Then manually select `上传图文` in the XHS creator page, upload `publish/cover.png`, and paste the title, complete caption, and hashtags from `post-package.json`.
-
-```bash
-python3 scripts/xhs-style-check.py \
-  --input data/<date>-<keyword>/post-package.json \
-  --cover data/<date>-<keyword>/publish/cover.png \
-  --strict --require-visual --require-cover-research --write-lock
-```
-
-### Automated Publishing (Not Recommended)
-
-**Automated publishing carries account-risk and account-penalty risk and is not the recommended workflow.** Use it only after the user approves the final content and separately, explicitly acknowledges the automation risk. Never use it for unattended, scheduled, bulk, multi-account, or interaction automation.
-
-Once those conditions are met, write the final lock:
+Run these commands only after the user approves the exact title, full caption, hashtags, cover, visibility, and timing:
 
 ```bash
 python3 scripts/xhs-style-check.py \
@@ -140,10 +124,10 @@ python3 scripts/xhs-style-check.py \
 python3 scripts/xhs-publish.py \
   --input data/<date>-<keyword>/post-package.json \
   --cover data/<date>-<keyword>/publish/cover.png \
-  --publish --acknowledge-automation-risk
+  --publish
 ```
 
-The publisher repeats the risk warning before opening the creator page and refuses to run without `--acknowledge-automation-risk`. It proceeds only when the lock exactly matches the title, full caption, hashtags, and cover. It stops for login, CAPTCHA, declarations, or unexpected dialogs.
+The publisher uses the current creator-page `上传图文` entry. It proceeds only when the lock exactly matches the title, full caption, hashtags, and cover. It stops for login, CAPTCHA, declarations, or unexpected dialogs.
 
 ## Requirements
 
